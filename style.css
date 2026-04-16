@@ -246,12 +246,6 @@ h2 {
   opacity: .25;
 }
 
-.sobre-name-badge {
-  position: absolute; bottom: 1.5rem; left: 1.5rem;
-  background: var(--yellow); color: var(--ink);
-  font-family: var(--font-display); font-weight: 700; font-size: .78rem;
-  padding: .45rem 1rem; border-radius: 100px; z-index: 1;
-}
 
 .sobre-text p { color: var(--ink2); line-height: 1.8; margin-bottom: 1rem; }
 
