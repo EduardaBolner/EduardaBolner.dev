@@ -1,4 +1,3 @@
-
 const cursor = document.getElementById('cursor');
 const cursorColors = ['#ff6bb5', '#9b5cff', '#00d4aa', '#ffe145', '#4facff'];
 let colorIndex = 0;
@@ -39,10 +38,36 @@ window.addEventListener('scroll', () => {
   sections.forEach(s => {
     if (window.scrollY >= s.offsetTop - 140) current = s.getAttribute('id');
   });
-
   navLinks.forEach(a => {
     const isActive = a.getAttribute('href') === '#' + current;
     a.style.color      = isActive ? 'var(--ink)' : '';
     a.style.fontWeight = isActive ? '700' : '';
   });
 });
+
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.getElementById('theme-btn');
+  const isDark = html.dataset.theme === 'dark';
+
+  if (isDark) {
+    html.removeAttribute('data-theme');
+    btn.textContent = '🌙';
+    localStorage.setItem('theme', 'light');
+  } else {
+    html.dataset.theme = 'dark';
+    btn.textContent = '☀️';
+    localStorage.setItem('theme', 'dark');
+  }
+}
+
+(function () {
+  if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.dataset.theme = 'dark';
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('theme-btn');
+      if (btn) btn.textContent = '☀️';
+    });
+  }
+})();

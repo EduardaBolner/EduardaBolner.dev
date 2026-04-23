@@ -23,6 +23,16 @@
     <li><a href="#formacao">Formação</a></li>
     <li><a href="#contato" class="nav-cta">Contato</a></li>
   </ul>
+  <button id="theme-btn" onclick="toggleTheme()" style="
+    background:transparent;
+    border:1.5px solid var(--border2);
+    border-radius:100px;
+    padding:.5rem .9rem;
+    font-size:.85rem;
+    cursor:pointer;
+    color:var(--ink);
+    transition:.2s;
+  ">🌙</button>
 </nav>
 
 <section id="hero">
@@ -35,6 +45,7 @@
     </h1>
     <p class="hero-desc">
       Apaixonada por tecnologia e interfaces. No front-end, transformo aprendizado em prática — criando experiências simples, bonitas e cada vez melhores.
+    </p>
     <div class="hero-actions">
       <a href="#projetos" class="btn-ink">
         Ver Projetos
@@ -298,5 +309,34 @@
 </footer>
 
 <script src="script.js"></script>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.getElementById('theme-btn');
+  const isDark = html.dataset.theme === 'dark';
+
+  if (isDark) {
+    html.removeAttribute('data-theme');
+    btn.textContent = '🌙';
+    localStorage.setItem('theme', 'light');
+  } else {
+    html.dataset.theme = 'dark';
+    btn.textContent = '☀️';
+    localStorage.setItem('theme', 'dark');
+  }
+}
+
+(function() {
+  if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.dataset.theme = 'dark';
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('theme-btn');
+      if (btn) btn.textContent = '☀️';
+    });
+  }
+})();
+</script>
+
 </body>
 </html>
