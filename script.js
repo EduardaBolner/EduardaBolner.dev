@@ -1,73 +1,55 @@
-const cursor = document.getElementById('cursor');
-const cursorColors = ['#ff6bb5', '#9b5cff', '#00d4aa', '#ffe145', '#4facff'];
-let colorIndex = 0;
+const root = document.documentElement;
 
-document.addEventListener('mousemove', e => {
-  cursor.style.left = e.clientX + 'px';
-  cursor.style.top  = e.clientY + 'px';
-});
+// Tema claro/escuro (o tema salvo já é aplicado no <head>)
+const themeBtn = document.getElementById('theme-btn');
 
-document.querySelectorAll('a, button').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    cursor.style.width  = '24px';
-    cursor.style.height = '24px';
-    cursor.style.background = cursorColors[colorIndex++ % cursorColors.length];
-  });
-  el.addEventListener('mouseleave', () => {
-    cursor.style.width  = '12px';
-    cursor.style.height = '12px';
-  });
-});
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry, i) => {
-    if (entry.isIntersecting) {
-      setTimeout(() => entry.target.classList.add('visible'), i * 90);
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.08 });
-
-document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-
-const sections = document.querySelectorAll('section[id]');
-const navLinks  = document.querySelectorAll('nav a[href^="#"]');
-
-window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(s => {
-    if (window.scrollY >= s.offsetTop - 140) current = s.getAttribute('id');
-  });
-  navLinks.forEach(a => {
-    const isActive = a.getAttribute('href') === '#' + current;
-    a.style.color      = isActive ? 'var(--ink)' : '';
-    a.style.fontWeight = isActive ? '700' : '';
-  });
-});
-
-
-function toggleTheme() {
-  const html = document.documentElement;
-  const btn = document.getElementById('theme-btn');
-  const isDark = html.dataset.theme === 'dark';
-
-  if (isDark) {
-    html.removeAttribute('data-theme');
-    btn.textContent = '🌙';
-    localStorage.setItem('theme', 'light');
-  } else {
-    html.dataset.theme = 'dark';
-    btn.textContent = '☀️';
-    localStorage.setItem('theme', 'dark');
-  }
+function isDark() {
+  if (root.dataset.theme) return root.dataset.theme === 'dark';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 
-(function () {
-  if (localStorage.getItem('theme') === 'dark') {
-    document.documentElement.dataset.theme = 'dark';
-    document.addEventListener('DOMContentLoaded', () => {
-      const btn = document.getElementById('theme-btn');
-      if (btn) btn.textContent = '☀️';
+themeBtn.addEventListener('click', () => {
+  const next = isDark() ? 'light' : 'dark';
+  root.dataset.theme = next;
+  try { localStorage.setItem('theme', next); } catch (e) {}
+});
+
+// Menu no celular
+const menuBtn  = document.getElementById('menu-btn');
+const navLinks = document.getElementById('nav-links');
+
+function setMenu(open) {
+  navLinks.classList.toggle('open', open);
+  menuBtn.setAttribute('aria-expanded', String(open));
+  menuBtn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+}
+
+menuBtn.addEventListener('click', () => setMenu(!navLinks.classList.contains('open')));
+navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+
+// Animação de entrada das seções
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// Destaca no menu a seção visível
+const sectionLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+
+const sectionObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    sectionLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
     });
-  }
-})();
+  });
+}, { rootMargin: '-45% 0px -50% 0px' });
+
+document.querySelectorAll('main section[id]').forEach(s => sectionObserver.observe(s));
