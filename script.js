@@ -53,3 +53,12 @@ const sectionObserver = new IntersectionObserver(entries => {
 }, { rootMargin: '-45% 0px -50% 0px' });
 
 document.querySelectorAll('main section[id]').forEach(s => sectionObserver.observe(s));
+
+// Ajusta as capas animadas dos projetos (800x600) à largura de cada card
+const thumbObserver = new ResizeObserver(entries => {
+  entries.forEach(entry => {
+    entry.target.style.setProperty('--thumb-scale', entry.contentRect.width / 800);
+  });
+});
+
+document.querySelectorAll('.proj-thumb').forEach(el => thumbObserver.observe(el));
