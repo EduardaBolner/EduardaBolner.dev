@@ -264,19 +264,25 @@ h3 { font-size: 1.05rem; font-weight: 600; }
 .hero-photo {
   position: relative;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+  aspect-ratio: 620 / 895;
   justify-self: end;
-  aspect-ratio: 1;
+  /* A parte de baixo segue a curva do círculo; o topo fica livre para a foto "sair" dele.
+     34.6% = metade da largura em relação à altura (620/2 ÷ 895) */
+  border-radius: 0 0 50% 50% / 0 0 34.6% 34.6%;
+  overflow: hidden;
 }
 
-/* Círculo de destaque atrás da foto */
+/* Círculo atrás da foto */
 .hero-photo::before {
   content: '';
   position: absolute;
-  inset: -6%;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, var(--accent-soft), transparent 70%);
-  border: 1px solid var(--border);
+  background: linear-gradient(160deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 40%, var(--bg)) 100%);
 }
 
 .hero-photo img {
@@ -284,9 +290,7 @@ h3 { font-size: 1.05rem; font-weight: 600; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
-  border: 6px solid var(--surface);
-  box-shadow: 0 0 0 2px var(--accent), var(--shadow);
+  object-position: bottom;
 }
 
 .status-dot {
